@@ -12,12 +12,14 @@ CGFloat const kTOSegmentedControlWidth = 180.0f;
 
 @interface TOSegmentedTabBarController ()
 
+@property (nonatomic, strong, readwrite) UIView *separatorView;
 @property (nonatomic, strong, readwrite) UIToolbar *toolbar;
 @property (nonatomic, strong, readwrite) UISegmentedControl *segmentedControl;
 
 // Convenience
 @property (nonatomic, readonly) BOOL compactHorizontal;
 @property (nonatomic, readonly) BOOL compactVertical;
+@property (nonatomic, readonly) BOOL regularLayout;
 @property (nonatomic, readonly) CGFloat segmentedControlWidth;
 
 @end
@@ -47,11 +49,10 @@ CGFloat const kTOSegmentedControlWidth = 180.0f;
 
 - (void)commonInit
 {
-//    _separatorLineColor = [UIColor colorWithRed:0.556f green:0.556 blue:0.576 alpha:1.0f];
-//    _secondaryViewControllerFractionalWidth = 0.3125f;
-//    _secondaryViewControllerMinimumWidth = 320.0f;
-//    _segmentedControlHeight = 26.0f;
-//    _segmentedControlVerticalOffset = 9.0f;
+    _showSplitControllersInRegularPresentation = YES;
+    _separatorLineColor = [UIColor colorWithRed:0.556f green:0.556 blue:0.576 alpha:1.0f];
+    _secondaryViewControllerFractionalWidth = 0.3125f;
+    _secondaryViewControllerMinimumWidth = 320.0f;
 }
 
 #pragma mark - View Management -
@@ -66,6 +67,12 @@ CGFloat const kTOSegmentedControlWidth = 180.0f;
     self.toolbar = [[UIToolbar alloc] initWithFrame:CGRectZero];
     [self.view addSubview:self.toolbar];
     
+    // Set up the separator view
+    self.separatorView = [[UIView alloc] initWithFrame:CGRectZero];
+    self.separatorView.backgroundColor = self.separatorLineColor;
+    [self.view addSubview:self.separatorView];
+    
+    // Set up the segmented control
     self.segmentedControl = [[UISegmentedControl alloc] initWithItems:nil];
     self.segmentedControl.frame = CGRectMake(0,0,kTOSegmentedControlWidth, 28.0f);
     self.segmentedControl.selectedSegmentIndex = 0;
@@ -81,6 +88,48 @@ CGFloat const kTOSegmentedControlWidth = 180.0f;
 {
     [super viewDidLayoutSubviews];
     
+    if (!self.regularLayout) { [self layoutSubviewsForCompactPresentation]; }
+    else { [self layoutSubviewsForRegularPresentation]; }
+    
+    // Make sure the right controller is visible
+    [self updateVisibleViewController];
+}
+
+- (void)layoutSubviewsForRegularPresentation
+{
+    // Hide the toolbar
+    self.toolbar.hidden = YES;
+    
+    // Set safe area to default
+    self.additionalSafeAreaInsets = UIEdgeInsetsZero;
+    
+    CGSize boundSize = self.view.bounds.size;
+    
+    // Display the controllers in split mode
+    // Handle the second controller first
+    CGRect frame = CGRectZero;
+    frame.size.width = floor(boundSize.width * self.secondaryViewControllerFractionalWidth);
+    frame.size.width = MAX(frame.size.width, self.secondaryViewControllerMinimumWidth);
+    frame.size.height = boundSize.height;
+    frame.origin.x = boundSize.width - frame.size.width;
+    self.controllers[1].view.frame = frame;
+    
+    //First Controller
+    frame.size.width = boundSize.width - frame.size.width;
+    frame.origin.x = 0.0f;
+    self.controllers[0].view.frame = frame;
+
+    //Separator
+    self.separatorView.hidden = NO;
+    
+    frame.size.width = 1.0f / UIScreen.mainScreen.nativeScale;
+    frame.origin.x = CGRectGetMinX(self.controllers[1].view.frame);
+    self.separatorView.frame = frame;
+    [self.view bringSubviewToFront:self.separatorView];
+}
+
+- (void)layoutSubviewsForCompactPresentation
+{
     CGSize boundSize = self.view.bounds.size;
     
     // Work out the height of the toolbar
@@ -95,12 +144,21 @@ CGFloat const kTOSegmentedControlWidth = 180.0f;
     frame.size.height = toolbarHeight;
     frame.origin.y = boundSize.height - (self.view.safeAreaInsets.bottom);
     self.toolbar.frame = frame;
+    self.toolbar.hidden = NO;
     [self.view bringSubviewToFront:self.toolbar];
     
     // Layout the separator view
     frame = self.segmentedControl.frame;
     frame.size.width = self.segmentedControlWidth;
     self.segmentedControl.frame = frame;
+    
+    // Size the controllers
+    for (UIViewController *controller in self.controllers) {
+        controller.view.frame = (CGRect){CGPointZero, boundSize};
+    }
+    
+    // Hide the separator
+    self.separatorView.hidden = YES;
 }
 
 - (void)configureToolBarItems
@@ -124,8 +182,10 @@ CGFloat const kTOSegmentedControlWidth = 180.0f;
 
 - (void)updateVisibleViewController
 {
+    BOOL regularLayout = self.regularLayout;
+    
     for (UIViewController *controller in self.controllers) {
-        controller.view.hidden = YES;
+        controller.view.hidden = regularLayout ? NO : YES;
     }
     
     self.controllers[self.visibleControllerIndex].view.hidden = NO;
@@ -188,6 +248,16 @@ CGFloat const kTOSegmentedControlWidth = 180.0f;
 - (BOOL)compactHorizontal
 {
     return self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassCompact;
+}
+
+- (BOOL)regularLayout
+{
+    BOOL compactLayout = self.compactHorizontal;
+    if (!compactLayout) {
+        compactLayout = (self.controllers.count != 2 && self.showSplitControllersInRegularPresentation);
+    }
+    
+    return !compactLayout;
 }
 
 @end

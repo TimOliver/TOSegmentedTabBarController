@@ -27,8 +27,21 @@ NS_ASSUME_NONNULL_BEGIN
 /** A set of items that will appear on the right side of the segmented bar in the toolbar */
 @property (nonatomic, copy) NSArray *rightBarButtonItems;
 
+/** The color of the separator line separating the two controllers in regular presentation */
+@property (nonatomic, strong) UIColor *separatorLineColor;
+
+/** In regular layout, the relative width of the second view controller to the screen */
+@property (nonatomic, assign) CGFloat secondaryViewControllerFractionalWidth;;
+
+/** In regular layout, the minimum size the second view controller may be */
+@property (nonatomic, assign) CGFloat secondaryViewControllerMinimumWidth;
+
 /** The index of the currently visible view controller */
 @property (nonatomic, assign) NSInteger visibleControllerIndex;
+
+/** Only if the number of controllers is 2, in regular presentation,
+ show both controllers on screen. The toolbar is also hidden. (Default YES) */
+@property (nonatomic, assign) BOOL showSplitControllersInRegularPresentation;
 
 /**
  Creates a new instance of this view controller, populated by the content
