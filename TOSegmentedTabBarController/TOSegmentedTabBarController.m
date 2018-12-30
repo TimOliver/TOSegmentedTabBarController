@@ -75,6 +75,7 @@ CGFloat const kTOSegmentedControlWidth = 180.0f;
     // Set up the segmented control
     self.segmentedControl = [[UISegmentedControl alloc] initWithItems:nil];
     self.segmentedControl.frame = CGRectMake(0,0,kTOSegmentedControlWidth, 28.0f);
+    [self.segmentedControl addTarget:self action:@selector(segmentedControlChanged:) forControlEvents:UIControlEventValueChanged];
     self.segmentedControl.selectedSegmentIndex = 0;
     
     // Start adding the child view controllers
@@ -224,6 +225,13 @@ CGFloat const kTOSegmentedControlWidth = 180.0f;
         [controller.view removeFromSuperview];
         [controller removeFromParentViewController];
     }
+}
+
+#pragma mark - Interaction -
+- (void)segmentedControlChanged:(id)sender
+{
+    _visibleControllerIndex = self.segmentedControl.selectedSegmentIndex;
+    [self updateVisibleViewController];
 }
 
 #pragma mark - Accessor -
