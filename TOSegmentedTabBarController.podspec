@@ -6,7 +6,7 @@ Pod::Spec.new do |s|
   s.homepage = 'https://github.com/TimOliver/TOSegmentedTabBarController'
   s.author   = 'Tim Oliver'
   s.source   = { :git => 'https://github.com/TimOliver/TOSegmentedTabBarController.git', :tag => s.version }
-  s.platform = :ios, '11.0'
+  s.platform = :ios, '9.0'
   s.source_files = 'TOSegmentedTabBarController/**/*.{h,m}'
   s.requires_arc = true
 end

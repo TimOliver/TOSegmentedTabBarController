@@ -102,7 +102,9 @@ CGFloat const kTOSegmentedControlWidth = 180.0f;
     self.toolbar.hidden = YES;
     
     // Set safe area to default
-    self.additionalSafeAreaInsets = UIEdgeInsetsZero;
+    if (@available(iOS 11.0, *)) {
+        self.additionalSafeAreaInsets = UIEdgeInsetsZero;
+    }
     
     CGSize boundSize = self.view.bounds.size;
     
@@ -137,13 +139,19 @@ CGFloat const kTOSegmentedControlWidth = 180.0f;
     CGFloat toolbarHeight = self.compactVertical ? 34.0f : 44.0f;
     
     // Set our safe area to include the tab bar
-    self.additionalSafeAreaInsets = UIEdgeInsetsMake(0, 0, toolbarHeight, 0);
+    if (@available(iOS 11.0, *)) {
+        self.additionalSafeAreaInsets = UIEdgeInsetsMake(0, 0, toolbarHeight, 0);
+    }
     
     // Layout the toolbar
     CGRect frame = CGRectZero;
     frame.size.width = boundSize.width;
     frame.size.height = toolbarHeight;
-    frame.origin.y = boundSize.height - (self.view.safeAreaInsets.bottom);
+    if (@available(iOS 11.0, *)) {
+        frame.origin.y = boundSize.height - (self.view.safeAreaInsets.bottom);
+    } else {
+        frame.origin.y = boundSize.height - toolbarHeight;
+    }
     self.toolbar.frame = frame;
     self.toolbar.hidden = NO;
     [self.view bringSubviewToFront:self.toolbar];

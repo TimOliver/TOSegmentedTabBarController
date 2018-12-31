@@ -22,12 +22,16 @@
     GroupedTableViewController *groupedController = [[GroupedTableViewController alloc] init];
     groupedController.title = @"Download";
     UINavigationController *firstController = [[UINavigationController alloc] initWithRootViewController:groupedController];
-    firstController.navigationBar.prefersLargeTitles = YES;
+    if (@available(iOS 11.0, *)) {
+        firstController.navigationBar.prefersLargeTitles = YES;
+    }
     
     PlainTableViewController *plainController = [[PlainTableViewController alloc] init];
     plainController.title = @"Activity";
     UINavigationController *secondController = [[UINavigationController alloc] initWithRootViewController:plainController];
-    secondController.navigationBar.prefersLargeTitles = YES;
+    if (@available(iOS 11.0, *)) {
+        secondController.navigationBar.prefersLargeTitles = YES;
+    }
     
     
     TOSegmentedTabBarController *segmentedController = [[TOSegmentedTabBarController alloc] initWithControllers:@[firstController, secondController]];

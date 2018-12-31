@@ -22,7 +22,7 @@ This library is a component of `TOFileKit` and as such, it was hastily built to 
 * Properly responds to size class changes.
 
 ## System Requirements
-iOS 11.0 or above
+iOS 9.0 or above
 
 ## Installation
 
