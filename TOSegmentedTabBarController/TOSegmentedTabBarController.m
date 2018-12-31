@@ -163,7 +163,11 @@ CGFloat const kTOSegmentedControlWidth = 180.0f;
     
     // Size the controllers
     for (UIViewController *controller in self.controllers) {
-        controller.view.frame = (CGRect){CGPointZero, boundSize};
+        CGSize viewSize = boundSize;
+        if (@available(iOS 11.0, *)) {}
+        else { viewSize.height -= toolbarHeight; }
+        
+        controller.view.frame = (CGRect){CGPointZero, viewSize};
     }
     
     // Hide the separator
