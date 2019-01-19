@@ -1,7 +1,7 @@
 # TOSegmentedTabBarController
 
 <p align="center">
-<img src="https://github.com/TimOliver/TOSegmentedTabBarController/raw/master/Images/screenshot.jpg" width="890" style="margin:0 auto" />
+<img src="https://github.com/TimOliver/TOSegmentedTabBarController/raw/master/screenshot.jpg" width="890" style="margin:0 auto" />
 </p>
 
 [![CocoaPods](https://img.shields.io/cocoapods/dt/TOSegmentedTabBarController.svg?maxAge=3600)](https://cocoapods.org/pods/TOSegmentedTabBarController)
